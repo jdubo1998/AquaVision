@@ -20,14 +20,14 @@ class SocketServerThread:
 
         self.socket = Socket.socket(Socket.AF_INET, Socket.SOCK_STREAM)
 
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 1)
-        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 20)
-        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 5)
+        self.socket.setsockopt(Socket.SOL_SOCKET, Socket.SO_KEEPALIVE, 1)
+        self.socket.setsockopt(Socket.SOL_SOCKET, Socket.SO_REUSEADDR, 1)
+        self.socket.setsockopt(Socket.IPPROTO_TCP, Socket.TCP_KEEPIDLE, 1)
+        self.socket.setsockopt(Socket.IPPROTO_TCP, Socket.TCP_KEEPINTVL, 20)
+        self.socket.setsockopt(Socket.IPPROTO_TCP, Socket.TCP_KEEPCNT, 5)
 
         try:
-            self.socket.bind((self.host, self.port ))
+            self.socket.bind((self.host, self.port))
         except:
             self.socket.shutdown(Socket.SHUT_RDWR)
             self.socket.close()
@@ -43,7 +43,7 @@ class SocketServerThread:
             self.socket.listen(1)
             print("D/SocketServerThread: Waiting for a conn.")
             self.conn, address = self.socket.accept()
-            self.conn.settimeout(30)
+            self.conn.settimeout(10)
             print("D/SocketServerThread: Connected to: " + address[0] + ":" + str(address[1]))
             self.isConnected = True
 
@@ -77,7 +77,7 @@ class SocketServerThread:
                         self.endSession = True
                         break
                 else:
-                    raise error('Connection disconnected')
+                    raise Socket.error('Connection disconnected')
             except:
                 self.conn.close()
                 self.isConnected = False
@@ -89,5 +89,8 @@ class SocketServerThread:
             print("D/SocketServerThread: Sending: " + message, end="")
             self.conn.sendall(str.encode(message))
 
-    def closeSocket():
+    def closeSocket(self):
         self.socket.close()
+
+if __name__ == "__main__":
+    socket = SocketServerThread("", "42051")
