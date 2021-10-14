@@ -28,15 +28,19 @@ export default function App() {
 }
 
 function testSocketConnection() {
-    console.log('Conneciton successful.');
+    console.log('Connection successful.');
 
-    socket = io('192.168.0.24:50422');
+    socket = io('128.194.50.17:8000');
     socket.on('connect', () => {
         console.log('Connected.');
     });
 
     socket.on('disconnect', () => {
         console.log('Disconnected.');
+    });
+
+    socket.on('relayCommand', (command) => {
+        console.log(command);
     });
 }
 
