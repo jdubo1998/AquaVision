@@ -1,49 +1,80 @@
-import React from 'react'
-import { io } from 'socket.io-client';  
+import React from 'react';
+import { StyleSheet, Text, View, Button, LogBox, TouchableOpacity, TextInput } from 'react-native';
+// ^^^ All these are libraries used to create the html objects below.
+import { io } from 'socket.io-client';
+import styles from './style.js';
+import Icon from 'react-native-vector-icons/FontAwesome5' //this library has standard icons we used for the buttons
 
 const socket = io('http://192.168.0.24:5000/') // Change to IP address of the device hosting the server.
 
-/***   START OF TEST CODE (Unrefined code, just a way to get user's inputs for test chat.)  ***/
-var message = {value: ''};
-var inputComp = {comp: null}
-
-function handleChange(e) {
-    message.value = e.target.value;
-    inputComp.comp = e.target;
-}
-
 export default function App() {
-    console.log(socket)
-
     return (
-        <div>
-            <input type='text' onChange={(e) => handleChange(e)}/>
-
-            <button onClick={relayMessage}>
-                Send message.
-            </button>
+        //this div holds everything inside it
+        <div> 
+            {/* This VIEW object is a container for all the buttons. The reason its in a container is to style */}
+            <View style={styles.container}>
+                {/* This view is a container for button 1 and is repeated below...*/}
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        onPress={screenshotFunction}
+                        style={styles.roundButton2}>
+                        <Icon size={24} color="white" name="camera"/>
+                        <Text>Screenshot</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        onPress={lightFunction}
+                        style={styles.roundButton2}>
+                        <Icon size={24} color="white" name="lightbulb"/>
+                        <Text>Toggle Lights.</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        onPress={moveUpFunction}
+                        style={styles.roundButton2}>
+                        <Icon size={24} color="white" name="arrow-up"/>
+                        <Text>Move Camera Up.</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        onPress={moveDownFunction}
+                        style={styles.roundButton2}>
+                        <Icon size={24} color="white" name="arrow-down"/>
+                        <Text>Move Camera Down.</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </div>
-    )
+    );
 }
 
-function relayMessage() {
-    if (socket != null) {
-        console.log(message.value);
-        socket.emit('relaycommand', message.value); // Sends the string: message.value to the Command Module using even 'relaycommand'.
-    }
-
-    message.value = '';
-    inputComp.comp.value = '';
+/***   Button Functions   ***/
+function screenshotFunction() {
+    socket.emit('relaycommand', 'screenshot');
 }
-/***   END OF TEST CODE   ***/
 
+function lightFunction() {
+    socket.emit('relaycommand', 'lights');
+}
+
+function moveUpFunction() {
+    socket.emit('relaycommand', 'moveup');
+}
+
+function moveDownFunction() {
+    socket.emit('relaycommand', 'movedown');
+}
+
+/***   Socket Functions   ***/
 /* Event that triggers when the command that is sent to the Translate Module. */
 socket.on('relaycommand', (command) => {})
 
 /* Event that triggers when the data received from the Translate Module. */
 socket.on('relaydata', (data) => {
-    console.log(`Received data: ${data}`)
-    // Do something with the data.
+    console.log(`Received data: ${data}`) // GPS Data.
 })
 
 /* Event that triggers when a successful connetion is established. */
