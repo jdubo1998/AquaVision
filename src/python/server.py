@@ -21,8 +21,7 @@ def connect(sid):
 # Event that triggers when a command is received from the user.
 @translator.sio.on('relaycommand')
 def relayCommand(command):
-    # Test code, asks for an input and sends it as a reply.
-    print('\n' + command + '\n')
+    print('\n' + command + '\n') # Prints out the command that is received.
 
 def main():
     print('\n-----------------------------------------------------------\n')
