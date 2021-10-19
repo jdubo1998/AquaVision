@@ -5,13 +5,21 @@ import { io } from 'socket.io-client';
 import styles from './style.js';
 import Icon from 'react-native-vector-icons/FontAwesome5' //this library has standard icons we used for the buttons
 
-const socket = io('http://192.168.0.24:5000/') // Change to IP address of the device hosting the server.
+const socket = io('http://128.194.50.22:5000/') // Change to IP address of the device hosting the server.
 
 export default function App() {
     return (
         //this div holds everything inside it
         <div> 
             {/* This VIEW object is a container for all the buttons. The reason its in a container is to style */}
+            <View style={styles.gpsLabel}>
+            <TextInput style = {styles.gpsText}
+            //    underlineColorAndroid = "transparent"
+               placeholder = "GPS Coordinates"
+            //    placeholderTextColor = "#9a73ef"
+               autoCapitalize = 'characters'
+               />
+            </View>
             <View style={styles.container}>
                 {/* This view is a container for button 1 and is repeated below...*/}
                 <View style={styles.buttonContainer}>
@@ -24,18 +32,20 @@ export default function App() {
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        onPress={lightFunction}
-                        style={styles.roundButton2}>
-                        <Icon size={24} color="white" name="lightbulb"/>
-                        <Text>Toggle Lights.</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity
                         onPress={moveUpFunction}
                         style={styles.roundButton2}>
                         <Icon size={24} color="white" name="arrow-up"/>
                         <Text>Move Camera Up.</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+            <View style={styles.container}>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        onPress={lightFunction}
+                        style={styles.roundButton2}>
+                        <Icon size={24} color="white" name="lightbulb"/>
+                        <Text>Toggle Lights.</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.buttonContainer}>
