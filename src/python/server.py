@@ -1,51 +1,53 @@
 from flask import Flask
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 
 # Wrapper class that will incorporate all needed functions and members in order to work as a translate module.
-class TranslateModule:
+class Server:
     def __init__(self):
         self.app = Flask(__name__)
         # self.app.config['SECRET_KEY'] = 'secret'
         self.sio = SocketIO(self.app, cors_allowed_origins='*')
 
-    def takeScreenshot(self):
+    def relay_gps_data(self):
+        self.sio.emit('relaydata', )
+
+    def take_screenshot(self):
         print('takeScreenshot')
 
-    def toggleLights(self):
+    def toggle_lights(self):
         print('toggleLights')
 
-    def moveUp(self):
+    def move_up(self):
         print('moveUp')
 
-    def moveDown(self):
+    def move_down(self):
         print('moveDown')
     
     def start(self):
         self.sio.run(self.app, host='0.0.0.0', debug=True)
 
-translator = TranslateModule()
+server = Server()
 
 # Event that triggers when a successful connection is made.
-@translator.sio.on('connect')
+@server.sio.on('connect')
 def connect(sid):
     pass
-    # print("connect ", sid)
 
 # Event that triggers when a command is received from the user.
-@translator.sio.on('relaycommand')
-def relayCommand(command):
+@server.sio.on('relaycommand')
+def relay_command(command):
     if command == 'screenshot':
-        translator.takeScreenshot()
+        server.take_screenshot()
     elif command == 'lights':
-        translator.toggleLights()
+        server.toggle_lights()
     elif command == 'moveup':
-        translator.moveUp()
+        server.move_up()
     elif command == 'movedown':
-        translator.moveDown()
+        server.move_down()
 
 def main():
     print('\n-----------------------------------------------------------\n')
-    translator.start()
+    server.start()
 
 if __name__ == "__main__":
     main()
