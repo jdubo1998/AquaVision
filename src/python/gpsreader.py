@@ -1,39 +1,44 @@
 from serial import Serial
-from pynmeagps import NMEAReader, exceptions
+from serial.serialutil import SerialException
+from pynmeagps import NMEAReader
+from pynmeagps.exceptions import NMEAStreamError
 from io import BufferedReader
-from threading import Thread
 
 class GPSReader:
-    def __init__(self, port='/dev/ttyAMA0', baudrate=9600, timeout=3):
+    def __init__(self, port='/dev/ttyAMA0', baudrate=9600, timeout=3, target=None):
         self._serial = Serial(port, baudrate, timeout=timeout)
         self._nmea_reader = NMEAReader(BufferedReader(self._serial), nmeaonly=True)
-        self._thread = Thread(target=self._start_thread)
         self.running = False
+        self.callback = target
 
+	# Starts a while loop. Currently the loop is only used to get the coordinates once.
     def start(self):
-        if not self.running:
-            self._thread.start()
+        self.running = True
 
-    def _start_thread(self):
         while self.running:
             try:
                 if self._serial.in_waiting:
                     (data, nmea_msg) = self._nmea_reader.read()
-                    if nmea_msg.msgID == 'RMC' or nmea_msg.msgID == 'GLL' or nmea_msg.msgID == 'GGA':
-                        self.send_gps_data(nmea_msg.lon, nmea_msg.lat)
-            except exceptions.NMEAStreamError:
+                    if nmea_msg.msgID == 'RMC':
+                        if self.callback != None:
+							# Sends the coordinates to the callback function.
+                            self.callback(nmea_msg.lat, nmea_msg.lon)
+                            self.running = False # Exits loop once coordinates are sent. Remove this if we create a polling loop.
+            except:
                 continue
     
-    def send_gps_data(self, lon, lat):
-        print('Longitude: {}     Lattitude: {}'.format(lon, lat))
+	def set_callback(self, target):
+        self.callback = target
 
     def stop(self):
         if self.running:
             self.running = False
-            self._thread.join()
+
+def _callback(lat, lon):
+    print('Latitude: {}   Longitude: {}'.format(lat, lon))
 
 if __name__ == '__main__':
-    reader = GPSReader()
+    reader = GPSReader(target=_callback)
     reader.start()
 
     try:

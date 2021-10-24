@@ -1,15 +1,31 @@
 from flask import Flask
-from flask_socketio import SocketIO
+from flask.logging import default_handler
+from flask_socketio import SocketIO, Namespace, emit
 
-# Wrapper class that will incorporate all needed functions and members in order to work as a translate module.
-class Server:
-    def __init__(self):
-        self.app = Flask(__name__)
-        # self.app.config['SECRET_KEY'] = 'secret'
-        self.sio = SocketIO(self.app, cors_allowed_origins='*')
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.WARNING)
 
-    def relay_gps_data(self):
-        self.sio.emit('relaydata', )
+class Server(Namespace):
+    namespace = '/'
+
+    app = Flask(__name__)
+    sio = SocketIO(app, cors_allowed_origins='*')
+
+    def __init__(self, target=None):
+        self.app.logger.removeHandler(default_handler)
+        self.sio.on_namespace(self)
+
+        if target != None:
+            self.bgtask = target
+
+	# Function used to send a socket.io event for the GPS coordinates.
+    def relay_gps_data(self, lat, lon):
+        self.sio.emit('relaydata', 'Latitude: {}   Longitude: {}'.format(lat, lon))
+        # print('relay_gps_data: Latitude: {}   Longitude: {}'.format(lat, lon))
+
+    def on_relaydata(self, data):
+        print('on_relaydata')
 
     def take_screenshot(self):
         print('takeScreenshot')
@@ -22,31 +38,35 @@ class Server:
 
     def move_down(self):
         print('moveDown')
+
+    def start_background_task(self, target):
+        self.sio.start_background_task(target)
     
     def start(self):
-        self.sio.run(self.app, host='0.0.0.0', debug=True)
+        self.sio.run(self.app, host='0.0.0.0')
+    
+    def stop(self):
+        self.sio.stop()
 
-server = Server()
+    # Event that triggers when a successful connection is made.
+    def on_connect(self, sid):
+        pass
 
-# Event that triggers when a successful connection is made.
-@server.sio.on('connect')
-def connect(sid):
-    pass
-
-# Event that triggers when a command is received from the user.
-@server.sio.on('relaycommand')
-def relay_command(command):
-    if command == 'screenshot':
-        server.take_screenshot()
-    elif command == 'lights':
-        server.toggle_lights()
-    elif command == 'moveup':
-        server.move_up()
-    elif command == 'movedown':
-        server.move_down()
+    # Event that triggers when a command is received from the user.
+    def on_relaycommand(self, command):
+		self.start_background_task(self.bgtask) # TODO: Remove this
+        if command == 'screenshot':
+            self.take_screenshot()
+        elif command == 'lights':
+            self.toggle_lights()
+        elif command == 'moveup':
+            self.move_up()
+        elif command == 'movedown':
+            self.move_down()
 
 def main():
     print('\n-----------------------------------------------------------\n')
+    server = Server()
     server.start()
 
 if __name__ == "__main__":
