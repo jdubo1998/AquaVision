@@ -42,15 +42,17 @@ export default function App() {
         <div> 
             {/* This VIEW object is a container for all the buttons. The reason its in a container is to style */}
             <View style={styles.gpsLabel}>
-            <Text style = {styles.gpsText}
-            autoCapitalize = 'characters'
-            //    underlineColorAndroid = "transparent"
-            //    placeholderTextColor = "#9a73ef"
-            >
-                {gpsCoordinates}
-            </Text>
-            
-               
+                <TouchableOpacity
+                    onPress={getGPS}
+                    style={styles.gpsLabel}>
+                    <Icon size={24} color="white" name="camera"/>
+                    <Text>GPS Coordinates</Text>
+                    <Text style = {styles.gpsText}
+                    autoCapitalize = 'characters'
+                    //    underlineColorAndroid = "transparent"
+                    //    placeholderTextColor = "#9a73ef"
+                    > {gpsCoordinates} </Text>
+                </TouchableOpacity>
             </View>
             <View style={styles.container}>
                 {/* This view is a container for button 1 and is repeated below...*/}
@@ -107,5 +109,9 @@ export default function App() {
 
     function moveDownFunction() {
         socket.emit('relaycommand', 'movedown');
+    }
+
+    function getGPS() {
+        socket.emit('relaycommand', 'getGPS');
     }
 }

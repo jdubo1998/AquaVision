@@ -54,7 +54,6 @@ class Server(Namespace):
 
     # Event that triggers when a command is received from the user.
     def on_relaycommand(self, command):
-		self.start_background_task(self.bgtask) # TODO: Remove this
         if command == 'screenshot':
             self.take_screenshot()
         elif command == 'lights':
@@ -63,6 +62,8 @@ class Server(Namespace):
             self.move_up()
         elif command == 'movedown':
             self.move_down()
+        elif command == 'getGPS':
+            self.start_background_task(self.bgtask)
 
 def main():
     print('\n-----------------------------------------------------------\n')
