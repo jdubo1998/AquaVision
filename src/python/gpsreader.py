@@ -5,7 +5,7 @@ from pynmeagps.exceptions import NMEAStreamError
 from io import BufferedReader
 
 class GPSReader:
-    def __init__(self, port='/dev/ttyAMA0', baudrate=9600, timeout=3, target=None):
+    def __init__(self, port='/dev/serial0', baudrate=9600, timeout=3, target=None):
         self._serial = Serial(port, baudrate, timeout=timeout)
         self._nmea_reader = NMEAReader(BufferedReader(self._serial), nmeaonly=True)
         self.running = False
@@ -27,7 +27,7 @@ class GPSReader:
             except:
                 continue
     
-	def set_callback(self, target):
+    def set_callback(self, target):
         self.callback = target
 
     def stop(self):
