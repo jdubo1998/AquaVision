@@ -57,6 +57,17 @@ export default function App() {
                     </TouchableOpacity>
                 </View>
             </View>
+            <View style={styles.container}>
+                {/* This view is a container for button 1 and is repeated below...*/}
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        // onPress={moveUpFunction}
+                        style={styles.roundButton2}>
+                        <Icon size={24} color="white" name="times"/>
+                        <Text>Quit Program.</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </div>
     );
 }
