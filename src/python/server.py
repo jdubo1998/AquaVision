@@ -10,6 +10,8 @@ import time
 class TranslateModule:
     in1 = 16
     in2 = 18
+    in3 = 22
+    toggleLight = True
     def __init__(self):
         self.app = Flask(__name__)
         # self.app.config['SECRET_KEY'] = 'secret'
@@ -19,8 +21,14 @@ class TranslateModule:
         print('takeScreenshot')
 
     def toggleLights(self):
-        print('toggleLights')
-        
+        toggleLight = not toggleLight
+        GPIO.output(self.in3, toggleLight)
+        print('toggle Lights')
+
+    # def turnOffLights(self):
+    #     GPIO.output(self.in3, True)
+    #     print("turn off lights")
+
     def motorOff(self):
         GPIO.output(self.in1, True)
         GPIO.output(self.in2, True)
@@ -55,13 +63,16 @@ def connect(sid):
 def gpioStart():
     in1 = 16
     in2 = 18
+    in3 = 22
 
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(in1, GPIO.OUT)
     GPIO.setup(in2, GPIO.OUT)
+    GPIO.setup(in3, GPIO.OUT)
 
     GPIO.output(in1, True)
     GPIO.output(in2, True)
+    GPIO.output(in3, True)
     print("Waiting for command")
     time.sleep(1)
 
