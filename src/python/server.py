@@ -32,43 +32,68 @@ class Server(Namespace):
 
     def toggle_lights(self):
         print('toggleLights')
+        
+    def motorOff(self):
+        GPIO.output(self.in1, True)
+        GPIO.output(self.in2, True)
+        print("motor turned off")
+        time.sleep(2.5)
 
     def move_up(self):
         print('moveUp')
+        GPIO.output(self.in1, False)
+        GPIO.output(self.in2, True)
+        time.sleep(2.5)
+        self.motorOff()
 
     def move_down(self):
         print('moveDown')
-
-    def start_background_task(self, target):
-        self.sio.start_background_task(target)
+        GPIO.output(self.in1, True)
+        GPIO.output(self.in2, False)
+        time.sleep(2.5)
+        self.motorOff()
     
     def start(self):
-        self.sio.run(self.app, host='0.0.0.0')
+        self.sio.run(self.app, host='0.0.0.0', debug=True)
+
+translator = TranslateModule()
+
+# Event that triggers when a successful connection is made.
+@translator.sio.on('connect')
+def connect(sid):
+    pass
+    # print("connect ", sid)
     
-    def stop(self):
-        self.sio.stop()
+def gpioStart():
+    in1 = 16
+    in2 = 18
 
-    # Event that triggers when a successful connection is made.
-    def on_connect(self, sid):
-        pass
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(in1, GPIO.OUT)
+    GPIO.setup(in2, GPIO.OUT)
 
-    # Event that triggers when a command is received from the user.
-    def on_relaycommand(self, command):
-        if command == 'screenshot':
-            self.take_screenshot()
-        elif command == 'lights':
-            self.toggle_lights()
-        elif command == 'moveup':
-            self.move_up()
-        elif command == 'movedown':
-            self.move_down()
-        elif command == 'getGPS':
-            self.start_background_task(self.bgtask)
+    GPIO.output(in1, True)
+    GPIO.output(in2, True)
+    print("Waiting for command")
+    time.sleep(1)
+
+# Event that triggers when a command is received from the user.
+@translator.sio.on('relaycommand')
+def relayCommand(command):
+    if command == 'screenshot':
+        translator.takeScreenshot()
+    elif command == 'lights':
+        translator.toggleLights()
+    elif command == 'moveup':
+        translator.moveUp()
+    elif command == 'movedown':
+        translator.moveDown()
 
 def main():
     print('\n-----------------------------------------------------------\n')
-    server = Server()
-    server.start()
+    gpioStart()
+    translator.start()
+    
 
 if __name__ == "__main__":
     main()
