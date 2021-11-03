@@ -1,24 +1,36 @@
 from flask import Flask
-from flask_socketio import SocketIO, emit
-import RPi.GPIO as GPIO
-import time
+from flask.logging import default_handler
+from flask_socketio import SocketIO, Namespace, emit
 
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.WARNING)
 
+class Server(Namespace):
+    namespace = '/'
 
+    app = Flask(__name__)
+    sio = SocketIO(app, cors_allowed_origins='*')
 
-# Wrapper class that will incorporate all needed functions and members in order to work as a translate module.
-class TranslateModule:
-    in1 = 16
-    in2 = 18
-    def __init__(self):
-        self.app = Flask(__name__)
-        # self.app.config['SECRET_KEY'] = 'secret'
-        self.sio = SocketIO(self.app, cors_allowed_origins='*')
+    def __init__(self, target=None):
+        self.app.logger.removeHandler(default_handler)
+        self.sio.on_namespace(self)
 
-    def takeScreenshot(self):
+        if target != None:
+            self.bgtask = target
+
+	# Function used to send a socket.io event for the GPS coordinates.
+    def relay_gps_data(self, lat, lon):
+        self.sio.emit('relaydata', 'Latitude: {}   Longitude: {}'.format(lat, lon))
+        # print('relay_gps_data: Latitude: {}   Longitude: {}'.format(lat, lon))
+
+    def on_relaydata(self, data):
+        print('on_relaydata')
+
+    def take_screenshot(self):
         print('takeScreenshot')
 
-    def toggleLights(self):
+    def toggle_lights(self):
         print('toggleLights')
         
     def motorOff(self):
@@ -27,14 +39,14 @@ class TranslateModule:
         print("motor turned off")
         time.sleep(2.5)
 
-    def moveUp(self):
+    def move_up(self):
         print('moveUp')
         GPIO.output(self.in1, False)
         GPIO.output(self.in2, True)
         time.sleep(2.5)
         self.motorOff()
 
-    def moveDown(self):
+    def move_down(self):
         print('moveDown')
         GPIO.output(self.in1, True)
         GPIO.output(self.in2, False)
