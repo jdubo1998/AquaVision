@@ -5,7 +5,7 @@ import { io } from 'socket.io-client';
 import styles from './style.js';
 import Icon from 'react-native-vector-icons/FontAwesome5' //this library has standard icons we used for the buttons
 
-const socket = io('http://192.168.0.24:5000/') // Change to IP address of the device hosting the server.
+const socket = io('http://10.3.141.1:5000/') // Change to IP address of the device hosting the server.
 
 export default function App() {
     const [gpsCoordinates, setGpsCoordinates] = useState("")
@@ -42,15 +42,17 @@ export default function App() {
         <div> 
             {/* This VIEW object is a container for all the buttons. The reason its in a container is to style */}
             <View style={styles.gpsLabel}>
-            <Text style = {styles.gpsText}
-            autoCapitalize = 'characters'
-            //    underlineColorAndroid = "transparent"
-            //    placeholderTextColor = "#9a73ef"
-            >
-                {gpsCoordinates}
-            </Text>
-            
-               
+                <TouchableOpacity
+                    onPress={getGPS}
+                    style={styles.gpsLabel}>
+                    <Icon size={24} color="white" name="camera"/>
+                    <Text>GPS Coordinates</Text>
+                    <Text style = {styles.gpsText}
+                    autoCapitalize = 'characters'
+                    //    underlineColorAndroid = "transparent"
+                    //    placeholderTextColor = "#9a73ef"
+                    > {gpsCoordinates} </Text>
+                </TouchableOpacity>
             </View>
             <View style={styles.container}>
                 {/* This view is a container for button 1 and is repeated below...*/}
@@ -107,5 +109,9 @@ export default function App() {
 
     function moveDownFunction() {
         socket.emit('relaycommand', 'movedown');
+    }
+
+    function getGPS() {
+        socket.emit('relaycommand', 'getGPS');
     }
 }
