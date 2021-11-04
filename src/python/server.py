@@ -2,7 +2,10 @@ from flask import Flask
 from flask_socketio import SocketIO, emit
 import RPi.GPIO as GPIO
 import time
-
+import cv2
+from time import sleep
+import os, os.path
+import signal
 
 
 
@@ -10,16 +13,39 @@ import time
 class TranslateModule:
     in1 = 16
     in2 = 18
+    in3 = 22
     def __init__(self):
         self.app = Flask(__name__)
         # self.app.config['SECRET_KEY'] = 'secret'
         self.sio = SocketIO(self.app, cors_allowed_origins='*')
+        self.toggleLight = False
 
     def takeScreenshot(self):
-        print('takeScreenshot')
+        cam = cv2.VideoCapture(1)
+        cv2.namedWindow("Press space to capture live stream image", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("Press space to capture live stream image", 500, 300)
+        
+        #change path with USB
+        path, dirs, file = next(os.walk("/home/pi/Documents/AquaVision/Screenshots"))
+        img_counter = len(file)
+        ret, frame = cam.read()
+        print(frame)
+        cv2.imshow("Press space to capture live stream image", frame)
+        k = cv2.waitKey(1)
+        img_name = "/home/pi/Documents/AquaVision/Screenshots/image_{}.jpg".format(img_counter)
+        cv2.imwrite(img_name, frame)
+        cam.release()
+        cv2.destroyAllWindows()
+        print("{} Screenshot written!".format(img_name))
 
     def toggleLights(self):
-        print('toggleLights')
+        self.toggleLight = not self.toggleLight
+        GPIO.output(self.in3, self.toggleLight)
+        time.sleep(1)
+        self.toggleLight = not self.toggleLight
+        GPIO.output(self.in3, self.toggleLight)
+        time.sleep(1)
+        print('toggleLights' + str(self.toggleLight))
         
     def motorOff(self):
         GPIO.output(self.in1, True)
@@ -43,6 +69,11 @@ class TranslateModule:
     
     def start(self):
         self.sio.run(self.app, host='0.0.0.0', debug=True)
+        
+    def quitFunction(self):
+        print("quitting program")
+        os.kill(p.pid, signal.SIGINT)
+#         exit(1)
 
 translator = TranslateModule()
 
@@ -55,13 +86,16 @@ def connect(sid):
 def gpioStart():
     in1 = 16
     in2 = 18
+    in3 = 22
 
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(in1, GPIO.OUT)
     GPIO.setup(in2, GPIO.OUT)
+    GPIO.setup(in3, GPIO.OUT)
 
     GPIO.output(in1, True)
     GPIO.output(in2, True)
+    GPIO.output(in3, True)
     print("Waiting for command")
     time.sleep(1)
 
@@ -76,6 +110,10 @@ def relayCommand(command):
         translator.moveUp()
     elif command == 'movedown':
         translator.moveDown()
+    elif command == "quit":
+        translator.quitFunction()
+        
+
 
 def main():
     print('\n-----------------------------------------------------------\n')
