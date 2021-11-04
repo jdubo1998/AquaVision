@@ -5,13 +5,13 @@ from pynmeagps.exceptions import NMEAStreamError
 from io import BufferedReader
 
 class GPSReader:
-    def __init__(self, port='/dev/ttyAMA0', baudrate=9600, timeout=3, target=None):
+    def __init__(self, port='/dev/ttyACM0', baudrate=9600, timeout=3, target=None):
         self._serial = Serial(port, baudrate, timeout=timeout)
         self._nmea_reader = NMEAReader(BufferedReader(self._serial), nmeaonly=True)
         self.running = False
         self.callback = target
 
-	# Starts a while loop. Currently the loop is only used to get the coordinates once.
+    # Starts a while loop. Currently the loop is only used to get the coordinates once.
     def start(self):
         self.running = True
 
@@ -27,7 +27,7 @@ class GPSReader:
             except:
                 continue
     
-	def set_callback(self, target):
+    def set_callback(self, target):
         self.callback = target
 
     def stop(self):

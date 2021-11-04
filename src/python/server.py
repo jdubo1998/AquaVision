@@ -19,7 +19,7 @@ class Server(Namespace):
         if target != None:
             self.bgtask = target
 
-	# Function used to send a socket.io event for the GPS coordinates.
+    # Function used to send a socket.io event for the GPS coordinates.
     def relay_gps_data(self, lat, lon):
         self.sio.emit('relaydata', 'Latitude: {}   Longitude: {}'.format(lat, lon))
         # print('relay_gps_data: Latitude: {}   Longitude: {}'.format(lat, lon))
@@ -54,7 +54,6 @@ class Server(Namespace):
 
     # Event that triggers when a command is received from the user.
     def on_relaycommand(self, command):
-		self.start_background_task(self.bgtask) # TODO: Remove this
         if command == 'screenshot':
             self.take_screenshot()
         elif command == 'lights':
@@ -63,6 +62,9 @@ class Server(Namespace):
             self.move_up()
         elif command == 'movedown':
             self.move_down()
+        elif command == 'getGPS':
+            self.start_background_task(self.bgtask)
+            
 
 def main():
     print('\n-----------------------------------------------------------\n')
