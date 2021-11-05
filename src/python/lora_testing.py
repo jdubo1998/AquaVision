@@ -47,7 +47,7 @@ while True:
             read_serial()
 
         elif i == 'r':
-            # ser.write('AT+RECV\r\n'.encode('utf-8'))
+            ser.write('AT+RECV\r\n'.encode('utf-8'))
             read_serial()
         
         elif i[0] == 't':
@@ -55,10 +55,10 @@ while True:
             read_serial()
 
         else:
-            # message = ''.join('{:02x}'.format(ord(c)) for c in i.ljust(10))
+            message = ''.join('{:02x}'.format(ord(c)) for c in i.ljust(10))
             
             # ser.write('{}\r\n'.format(i).encode('utf-8'))
-            ser.write('AT+SEND 0001,"{}"\r\n'.format(message).encode('utf-8'))
+            ser.write('AT+SEND FFFF,"{}"\r\n'.format(message).encode('utf-8'))
             read_serial()
     
     except KeyboardInterrupt:
