@@ -1,7 +1,6 @@
 from flask import Flask
 from flask.logging import default_handler
-from flask_socketio import SocketIO, Namespace, emit
-from camera_controller import CameraController
+from flask_socketio import SocketIO, Namespace
 import sys
 
 # import logging
@@ -11,81 +10,34 @@ import sys
 class Server(Namespace):
     namespace = '/'
 
-    app = Flask(__name__)
-    sio = SocketIO(app, cors_allowed_origins='*')
+    # app = Flask(__name__)
+    # sio = SocketIO(app, cors_allowed_origins='*')
 
-    def __init__(self, target=None):
-        self.app.logger.removeHandler(default_handler)
+    def __init__(self, target):
+        # self.app.logger.removeHandler(default_handler)
+        self.app = Flask(__name__)
+        self.sio = SocketIO(self.app, cors_allowed_origins='*')
         self.sio.on_namespace(self)
-        self.cam_controller = CameraController()
-
-        if target != None:
-            self.bgtask = target
+        self.callback = target
 
 	# Function used to send a socket.io event for the GPS coordinates.
     def relay_gps_data(self, lat, lon):
         self.sio.emit('relaydata', 'Latitude: {}   Longitude: {}'.format(lat, lon))
-        # print('relay_gps_data: Latitude: {}   Longitude: {}'.format(lat, lon))
+
+    def on_connect(sid):
+        print('Connected. ({})'.format(sid))
+
+    def on_relaycommand(self, command):
+        self.callback(command)
 
     def on_relaydata(self, data):
         print('on_relaydata')
-
-    def take_screenshot(self):
-        print('takeScreenshot')
-
-    def toggle_lights(self):
-        self.cam_controller.toggle_lights()
-        
-    # def motorOff(self):
-    #     GPIO.output(self.in1, True)
-    #     GPIO.output(self.in2, True)
-    #     print("motor turned off")
-    #     time.sleep(2.5)
-
-    def move_up(self):
-        self.cam_controller.motor_up()
-        # print('moveUp')
-        # GPIO.output(self.in1, False)
-        # GPIO.output(self.in2, True)
-        # time.sleep(2.5)
-        # self.motorOff()
-
-    def move_down(self):
-        self.cam_controller.motor_down()
-        # print('moveDown')
-        # GPIO.output(self.in1, True)
-        # GPIO.output(self.in2, False)
-        # time.sleep(2.5)
-        # self.motorOff()
     
     def start(self):
         self.sio.run(self.app, host='0.0.0.0', debug=True)
         
-    def quitFunction(self):
-        print("quitting program")
-        sys.exit()
-
-server = Server()
-
-# Event that triggers when a successful connection is made.
-@server.sio.on('connect')
-def connect(sid):
-    pass
-    # print("connect ", sid)
-
-# Event that triggers when a command is received from the user.
-@server.sio.on('relaycommand')
-def relayCommand(command):
-    if command == 'screenshot':
-        server.take_screenshot()
-    elif command == 'lights':
-        server.toggle_lights()
-    elif command == 'moveup':
-        server.move_up()
-    elif command == 'movedown':
-        server.move_down()
-    elif command == "quit":
-        server.quitFunction()
+    def stop(self):
+        self.sio.stop()
         
 def main():
     print('\n-----------------------------------------------------------\n')

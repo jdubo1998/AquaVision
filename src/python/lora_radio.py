@@ -3,9 +3,11 @@ from serial.serialutil import SerialException
 from threading import Thread
 
 class LoRaRadio():
-    def __init__(self, addr, port='/dev/serial0', baudrate=9600, timeout=0.5):
+    def __init__(self, addr, target, port='/dev/serial0', baudrate=9600, timeout=0.5):
         self.ser = Serial(port, baudrate, timeout=timeout, parity=PARITY_NONE, stopbits=1)
+        self.receiving = False
         self.addr = addr
+        self.callback = target
         self.recv_thread = Thread(target=self._recv_thread)
         self.open()
 
@@ -21,49 +23,42 @@ class LoRaRadio():
 
         self.write_serial('AT+SEND {},"{}"'.format(addr, message_hex))
 
+    def send_bytes(self, bytes, addr='FFFF'):
+        self.write_serial('AT+SEND {},"{}"'.format(addr, bytes))
+
     # Reads from the serial port.
     def read_serial(self):
         try:
-            response = self.ser.readline()
-            if response:
-                self.interpret_response(response)
+            r = self.ser.readline()
+            if r:
+                response = str(r, 'utf-8', errors='ignore')
+                self.callback(response)
         except SerialException as e:
             print(e)
 
-    # Interprets a received message and runs the appropriate function based on the contents.
-    def interpret_response(self, response):
-        s = str(response, 'utf-8', errors='ignore')
-
-        if s.__contains__('md'):
-            print('Move Down')
-        elif s.__contains__('mu'):
-            print('Move Up')
-        elif s.__contains__('ss'):
-            print('Screenshot')
-        elif s.__contains__('tl'):
-            print('Toggle Lights')
-        elif s.__contains__('gps'):
-            print('Get GPS')
-
     # Toggles between two modes: Receiving and Transmitting mode.
-    def toggle_mode(self):
-        if self.receiving:
+    def set_mode(self, mode):
+        if mode == 0:
             self.receiving = False
-            
+            if self.recv_thread.is_alive():
+                self.recv_thread.join()
+
             self.write_serial('+++')
             self.write_serial('AT+SADDR {}'.format(self.addr))
             self.write_serial('AT+ROLE 1')
             self.write_serial('AT+USERMODE 0')
 
             self.ser.readline()
-        else:
+            
+        elif mode == 1:
+            if not self.receiving:
+                self.recv_thread.start()
+
             self.receiving = True
-            self.recv_thread.start()
 
     # Opens the serial port and sets the LoRa parameters to the default configuration.
     def open(self):
-        self.receiving = True
-        self.toggle_mode()
+        self.set_mode(0)
         
         if not self.ser.is_open:
             self.ser.open()
@@ -72,6 +67,8 @@ class LoRaRadio():
     def close(self):
         self.receiving = False
         self.ser.close()
+        if self.recv_thread.is_alive():
+            self.recv_thread.join()
 
     # Polls the serial port to read any messages received by the LoRa radio.
     def _recv_thread(self):
