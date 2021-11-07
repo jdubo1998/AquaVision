@@ -19,7 +19,7 @@ class LoRaRadio():
     # FFFF is the broadcast address.
     def send_message(self, message, addr='FFFF'):
         # Converts message to an 8 byte hex array.
-        message_hex = ''.join('{:02x}'.format(ord(c)) for c in i.ljust(10))
+        message_hex = ''.join('{:02x}'.format(ord(c)) for c in message.ljust(10))
 
         self.write_serial('AT+SEND {},"{}"'.format(addr, message_hex))
 
