@@ -20,7 +20,7 @@ class Server(Namespace):
         self.sio.on_namespace(self)
         self.callback = target
 
-	# Function used to send a socket.io event for the GPS coordinates.
+    # Function used to send a socket.io event for the GPS coordinates.
     def relay_gps_data(self, lat, lon):
         self.sio.emit('relaydata', 'Latitude: {}   Longitude: {}'.format(lat, lon))
 
