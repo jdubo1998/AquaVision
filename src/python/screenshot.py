@@ -7,7 +7,7 @@ name = 'capture'
 cam = cv2.VideoCapture(1)
 
 cv2.namedWindow("Press space to capture live stream image", cv2.WINDOW_NORMAL)
-cv2.resizeWindow("Press space to capture live stream image", 500, 300)
+#cv2.resizeWindow("Press space to capture live stream image", 500, 300)
 
 path, dirs, file = next(os.walk("/home/pi/Documents/AquaVision/Screenshots"))
 img_counter = len(file)
