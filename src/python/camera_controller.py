@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO
 import cv2
+import os
+from datetime import datetime
 import time
 
 class CameraController():
@@ -7,7 +9,10 @@ class CameraController():
         self.down_pin = 16
         self.up_pin = 18
         self.ledlight_pin = 22
-
+        self.dir = '../../screenshots'
+        
+        GPIO.setwarnings(False)
+        
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.down_pin, GPIO.OUT)
         GPIO.setup(self.up_pin, GPIO.OUT)
@@ -40,28 +45,35 @@ class CameraController():
         # time.sleep(2.5)
 
     def toggle_lights(self):
-        self.toggleLight = not self.toggleLight
-        GPIO.output(self.ledlight_pin, self.toggleLight)
+        GPIO.output(self.ledlight_pin, True)
         time.sleep(1)
-        self.toggleLight = not self.toggleLight
-        GPIO.output(self.ledlight_pin, self.toggleLight)
+        GPIO.output(self.ledlight_pin, False)
         time.sleep(1)
         print('Toggled lights. (pin {})'.format(self.ledlight_pin))
 
-    def takeScreenshot(self):
-        cam = cv2.VideoCapture(1)
-        cv2.namedWindow('Press space to capture live stream image', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('Press space to capture live stream image', 500, 300)
-        
-        #change path with USB
-        path, dirs, file = next(os.walk('/home/pi/Documents/AquaVision/Screenshots'))
-        img_counter = len(file)
+    def take_screenshot(self):
+        cam = cv2.VideoCapture(0)
+
         ret, frame = cam.read()
-        print(frame)
-        cv2.imshow('Press space to capture live stream image', frame)
-        k = cv2.waitKey(1)
-        img_name = '/home/pi/Documents/AquaVision/Screenshots/image_{}.jpg'.format(img_counter)
-        cv2.imwrite(img_name, frame)
+        dir = os.path.abspath(self.dir)
+
+        cv2.imwrite('{}/{}.jpg'.format(dir, datetime.today().strftime('%m-%d-%Y_%H-%M-%S')), frame)
+
         cam.release()
-        cv2.destroyAllWindows()
-        print('{} Screenshot written!'.format(img_name))
+
+        # cam = cv2.VideoCapture(1)
+        # cv2.namedWindow('Press space to capture live stream image', cv2.WINDOW_NORMAL)
+        # cv2.resizeWindow('Press space to capture live stream image', 500, 300)
+        
+        # #change path with USB
+        # path, dirs, file = next(os.walk('/home/pi/Documents/AquaVision/Screenshots'))
+        # img_counter = len(file)
+        # ret, frame = cam.read()
+        # print(frame)
+        # cv2.imshow('Press space to capture live stream image', frame)
+        # k = cv2.waitKey(1)
+        # img_name = '/home/pi/Documents/AquaVision/Screenshots/image_{}.jpg'.format(img_counter)
+        # cv2.imwrite(img_name, frame)
+        # cam.release()
+        # cv2.destroyAllWindows()
+        # print('{} Screenshot written!'.format(img_name))
