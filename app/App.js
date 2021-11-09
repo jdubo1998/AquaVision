@@ -106,14 +106,9 @@ export default function App() {
         </div>
     )
 
-function moveDownFunction() {
-    socket.emit('relaycommand', 'movedown');
-}
 
-function quitFunction() {
-    socket.emit('relaycommand', 'quit');
-    console.log("quitting rn")
-}
+
+
 
 /***   Socket Functions   ***/
 /* Event that triggers when the command that is sent to the Translate Module. */
@@ -133,5 +128,13 @@ socket.on('relaycommand', (command) => {})
 
     function getGPS() {
         socket.emit('relaycommand', 'getGPS');
+    }
+
+    function quitFunction() {
+        socket.emit('relaycommand', 'quit');
+    }
+
+    function screenshotFunction() {
+        socket.emit('relaycommand', 'screenshot');
     }
 }
