@@ -19,8 +19,7 @@ class LoRaRadio():
     # FFFF is the broadcast address.
     def send_message(self, message, addr='FFFF'):
         # Converts message to an 8 byte hex array.
-        message_hex = ''.join('{:02x}'.format(ord(c)) for c in message.ljust(10))
-
+        message_hex = ''.join('{:02x}'.format(ord(c)) for c in message.ljust(8))
         self.write_serial('AT+SEND {},"{}"'.format(addr, message_hex))
 
     def send_bytes(self, bytes, addr='FFFF'):
@@ -47,14 +46,14 @@ class LoRaRadio():
             self.write_serial('AT+SADDR {}'.format(self.addr))
             self.write_serial('AT+ROLE 1')
             self.write_serial('AT+USERMODE 0')
-
+            
             self.ser.readline()
             
         elif mode == 1:
+            print('In receiving mode.')
             if not self.receiving:
+                self.receiving = True
                 self.recv_thread.start()
-
-            self.receiving = True
 
     # Opens the serial port and sets the LoRa parameters to the default configuration.
     def open(self):
