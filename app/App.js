@@ -5,7 +5,7 @@ import { io } from 'socket.io-client';
 import styles from './style.js';
 import Icon from 'react-native-vector-icons/FontAwesome5' //this library has standard icons we used for the buttons
 
-const socket = io('http://10.3.141.1:5000/') // Change to IP address of the device hosting the server.
+const socket = io('http://128.194.50.40:5000/') // Change to IP address of the device hosting the server.
 
 export default function App() {
     const [gpsCoordinates, setGpsCoordinates] = useState("")
@@ -92,13 +92,32 @@ export default function App() {
                     </TouchableOpacity>
                 </View>
             </View>
+            <View style={styles.container}>
+                {/* This view is a container for button 1 and is repeated below...*/}
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        onPress={quitFunction}
+                        style={styles.roundButton2}>
+                        <Icon size={24} color="white" name="times"/>
+                        <Text>Quit Program.</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </div>
     )
 
-    /***   Button Functions   ***/
-    function screenshotFunction() {
-        socket.emit('relaycommand', 'screenshot');
-    }
+function moveDownFunction() {
+    socket.emit('relaycommand', 'movedown');
+}
+
+function quitFunction() {
+    socket.emit('relaycommand', 'quit');
+    console.log("quitting rn")
+}
+
+/***   Socket Functions   ***/
+/* Event that triggers when the command that is sent to the Translate Module. */
+socket.on('relaycommand', (command) => {})
 
     function lightFunction() {
         socket.emit('relaycommand', 'lights');
