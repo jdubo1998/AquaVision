@@ -10,9 +10,6 @@ import sys
 class Server(Namespace):
     namespace = '/'
 
-    # app = Flask(__name__)
-    # sio = SocketIO(app, cors_allowed_origins='*')
-
     def __init__(self, target):
         # self.app.logger.removeHandler(default_handler)
         self.app = Flask(__name__)
@@ -38,10 +35,3 @@ class Server(Namespace):
         
     def stop(self):
         self.sio.stop()
-        
-def main():
-    print('\n-----------------------------------------------------------\n')
-    server.start()
-
-if __name__ == "__main__":
-    main()

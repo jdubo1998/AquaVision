@@ -18,6 +18,9 @@ class TranslateModule():
             self.radio.send_message('ss')
         elif command == 'getgps':
             self.radio.send_message('gps')
+        elif command == 'exit':
+            self.radio.send_message('exit')
+            self.exit()
 
     def _interpret_lora_message(self, message):
         print(message)
