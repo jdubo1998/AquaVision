@@ -46,7 +46,7 @@ class LoRaRadio():
             self.write_serial('AT+SADDR {}'.format(self.addr))
             self.write_serial('AT+ROLE 1')
             self.write_serial('AT+USERMODE 0')
-
+            
             self.ser.readline()
             
         elif mode == 1:

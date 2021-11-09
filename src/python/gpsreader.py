@@ -14,12 +14,10 @@ class GPSReader:
 
 	# Starts a while loop. Currently the loop is only used to get the coordinates once.
     def _start_reader_thread(self):
-        self.reading = True
-
         while self.reading:
             try:
                 if self._serial.in_waiting:
-                    (data, nmea_msg) = self._nmea_reader.read()
+                    data, nmea_msg = self._nmea_reader.read()
                     if nmea_msg.msgID == 'RMC':
                         self.lat = nmea_msg.lat
                         self.log = nmea_msg.lon
@@ -30,7 +28,9 @@ class GPSReader:
         return self.lat, self.log
 
     def start(self):
-        self.reader_thread.start()
+        if not self.reading:
+            self.reading = True
+            self.reader_thread.start() 
 
     def stop(self):
         if self.reading:
