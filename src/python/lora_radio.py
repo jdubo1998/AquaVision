@@ -37,6 +37,7 @@ class LoRaRadio():
 
     def reset(self):
         self.write_serial('+++')
+        self.write_serial('AT+RESET')
         self.write_serial('AT+SADDR {}'.format(self.addr))
         self.write_serial('AT+ROLE 1')
         self.write_serial('AT+USERMODE 0')
@@ -80,7 +81,7 @@ class LoRaRadio():
             self.read_serial()
 
 def print_response(response):
-    if not response == 'A':
+    if not response == str(b'A\x00\x01\x01', 'utf-8'):
         print(response)
 
 if __name__ == '__main__':
