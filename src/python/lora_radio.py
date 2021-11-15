@@ -35,6 +35,14 @@ class LoRaRadio():
         except SerialException as e:
             print(e)
 
+    def reset(self):
+        self.write_serial('+++')
+        self.write_serial('AT+SADDR {}'.format(self.addr))
+        self.write_serial('AT+ROLE 1')
+        self.write_serial('AT+USERMODE 0')
+
+        self.ser.readline()
+
     # Toggles between two modes: Receiving and Transmitting mode.
     def set_mode(self, mode):
         if mode == 0:
@@ -42,17 +50,13 @@ class LoRaRadio():
             if self.recv_thread.is_alive():
                 self.recv_thread.join()
 
-            self.write_serial('+++')
-            self.write_serial('AT+SADDR {}'.format(self.addr))
-            self.write_serial('AT+ROLE 1')
-            self.write_serial('AT+USERMODE 0')
-            
-            self.ser.readline()
+            self.reset()
             
         elif mode == 1:
             print('In receiving mode.')
             if not self.receiving:
                 self.receiving = True
+                self.recv_thread = Thread(target=self._recv_thread)
                 self.recv_thread.start()
 
     # Opens the serial port and sets the LoRa parameters to the default configuration.
@@ -75,10 +79,14 @@ class LoRaRadio():
             self.ser.write('AT+RECV\r\n'.encode('utf-8'))
             self.read_serial()
 
+def print_response(response):
+    if not response == 'A':
+        print(response)
+
 if __name__ == '__main__':
     # Creates a radio module with the address 0001.
     # The address is a 2-byte hexidecmial which uses this conversion: ABCD => CDAB
-    radio = LoRaRadio('0100')
+    radio = LoRaRadio('0100', print_response)
 
     try:
         while True:
@@ -86,14 +94,14 @@ if __name__ == '__main__':
 
             if radio.receiving:
                 if i == 'q':
-                    radio.toggle_mode()
+                    radio.set_mode(0)
         
             else:
                 if i == 'q':
                     break
                 
                 elif i == 'r':
-                    radio.toggle_mode()
+                    radio.set_mode(1)
 
                 elif i.__contains__('+'):
                     radio.write_serial('AT+{}'.format(i[1:]))
