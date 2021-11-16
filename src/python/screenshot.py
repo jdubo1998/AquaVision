@@ -1,47 +1,42 @@
 import cv2
 from datetime import datetime
+import os
 
+dir = '../../screenshots'
 cam = cv2.VideoCapture(0)
 
-ret, frame = cam.read()
+def take_screenshot():
+    adir = os.path.abspath(dir)
+    ret, frame = cam.read()
+    cv2.imwrite('{}/{}.jpg'.format(adir, datetime.today().strftime('%m-%d-%Y_%H-%M-%S')), frame)
 
-cv2.imwrite('image.jpg', frame)
-
-cam.release()
-
+def release():
+    cam.release()
 
 
-# import cv2
-# from time import sleep
-# import os, os.path
+if __name__ == '__main__':
+    while True:
+        i = input('> ')
 
-# name = 'capture'
+        if i == 's':
+            take_screenshot()
 
-# cam = cv2.VideoCapture(0)
+        if i == 'q':
+            break
 
-# cv2.namedWindow("Press space to capture live stream image", cv2.WINDOW_NORMAL)
-# #cv2.resizeWindow("Press space to capture live stream image", 500, 300)
+        if i == 'r':
+            cv2.namedWindow('capture', cv2.WINDOW_NORMAL)
+            cv2.resizeWindow('capture', 500, 300)
 
-# path, dirs, file = next(os.walk("/home/pi/Documents/AquaVision/Screenshots"))
-# img_counter = len(file)
-# print(img_counter)
+            while True:
+                ret, frame = cam.read()
+                cv2.imshow('capture', frame)
 
-# while True:
-#     ret, frame = cam.read()
-#     cv2.imshow("Press space to capture live stream image", frame)
-#     if not ret:
-#         print("Failed to grab frame")
-#         break
-    
+                k = cv2.waitKey(1)
 
-#     k = cv2.waitKey(1)
-#     if k % 256 == 32:
-#         # SPACE pressed
-#         img_name = "/home/pi/Documents/AquaVision/Screenshots/image_{}.jpg".format(img_counter)
-#         cv2.imwrite(img_name, frame)
-#         print("{} written!".format(img_name))
-#         img_counter += 1
+                if k == 'q':
+                    cv2.destroyAllWindows()
+                    break
+            break
 
-# cam.release()
-
-# cv2.destroyAllWindows()
+    release()
