@@ -7,7 +7,7 @@ from time import sleep
 
 class ControlModule():
     def __init__(self):
-        self.radio = LoRaRadio('0100', self.interpret_lora_message)
+        self.radio = LoRaRadio('0200', self.interpret_lora_message)
         self.radio.set_mode(1)
         self.gps = GPSReader()
         self.gps.start()
@@ -16,8 +16,7 @@ class ControlModule():
     # Interprets a received message and runs the appropriate function based on the contents.
     def interpret_lora_message(self, message):
         if message.__contains__('mu'):
-            print('Move Up')
-            # self.camera.motor_up()
+            self.camera.motor_up()
         elif message.__contains__('md'):
             self.camera.motor_down()
         elif message.__contains__('tl'):
@@ -39,7 +38,8 @@ class ControlModule():
 
     def _loop(self):
         while self.running:
-            sleep(1)
+            
+            sleep(5)
 
         self.stop()
 
