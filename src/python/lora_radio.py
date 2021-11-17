@@ -11,6 +11,7 @@ class LoRaRadio():
         self.addr = addr
         self.callback = target
         self.recv_thread = Thread(target=self._recv_thread)
+        self.reset()
         self.open()
 
     # Writes to the serial port.
@@ -67,7 +68,7 @@ class LoRaRadio():
             if self.recv_thread.is_alive():
                 self.recv_thread.join()
 
-            self.reset()
+            # self.reset()
             
         elif mode == 1:
             # print('In receiving mode.')

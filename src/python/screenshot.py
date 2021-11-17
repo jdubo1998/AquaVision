@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 
 dir = '../../screenshots'
-cam = cv2.VideoCapture(1)
+cam = cv2.VideoCapture(0)
 
 def take_screenshot():
     adir = os.path.abspath(dir)
@@ -29,8 +29,12 @@ if __name__ == '__main__':
             cv2.resizeWindow('capture', 500, 300)
 
             while True:
-                ret, frame = cam.read()
-                cv2.imshow('capture', frame)
+                success, frame = cam.read()
+                if success:
+                    cv2.imshow('capture', frame)
+
+                else:
+                    print("Can't read image.")
 
                 k = cv2.waitKey(1)
 
