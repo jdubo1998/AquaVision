@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 
 dir = '../../screenshots'
-cam = cv2.VideoCapture(0)
+cam = cv2.VideoCapture(1)
 
 def take_screenshot():
     adir = os.path.abspath(dir)
