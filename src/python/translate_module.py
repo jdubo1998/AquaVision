@@ -25,6 +25,7 @@ class TranslateModule():
         elif command == 'screenshot':
             print("screenshot")
             screenshot.take_screenshot()
+            screenshot.release()
         elif command == 'getgps':
             print("getgps")
             self.server.relay_gps_data(self.lat, self.log)
@@ -39,6 +40,8 @@ class TranslateModule():
         try:
             self.lat = unpack('!f', bytes.fromhex(message[:8]))[0]
             self.log = unpack('!f', bytes.fromhex(message[8:]))[0]
+
+            self.server.relay_gps_data(self.lat, self.log)
         except:
             pass
 
