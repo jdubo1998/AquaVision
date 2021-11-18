@@ -5,25 +5,27 @@ export default StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor:"#0b5394",
     },
-    roundButton1: {
-        width: 100,
+    roundButton2: {
+        marginTop: 0,
+        width: 300,
+        height: 200,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        borderRadius: 50,
+        backgroundColor: '#0b5394',
+    },
+    roundButton3: {
+        marginTop: 0,
+        width: 300,
         height: 100,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
-        borderRadius: 100,
-        backgroundColor: 'orange',
-    },
-    roundButton2: {
-        marginTop: 0,
-        width: 200,
-        height: 175,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
-        borderRadius: 100,
-        backgroundColor: '#ccc',
+        borderRadius: 50,
+        backgroundColor: '#0b5394',
     },
     searchBar: {
         width: 50,
@@ -44,6 +46,12 @@ export default StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
     },
+    container2: {
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     buttonContainer: {
         // flex: 1,
         padding : 5
@@ -51,13 +59,36 @@ export default StyleSheet.create({
     gpsLabel: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#d3d3d3',
+        backgroundColor: '#0b5394',
         padding: 10,
         marginHorizontal: 40,
-        // margin: 15,
         marginVertical: 15,
-        height: 80,
+        height: 100,
         borderRadius: 10
+     },
+     connectionLabel: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#0b5394',
+        padding: 10,
+        marginHorizontal: 50,
+        marginVertical: 15,
+        flexDirection: 'row',
+        height: 100,
+        borderRadius: 10,
+        marginHorizontal: 50,
+     },
+     socketLabel: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#0b5394',
+        padding: 10,
+        marginHorizontal: 50,
+        marginVertical: 15,
+        flexDirection: 'row',
+        height: 100,
+        borderRadius: 10,
+        marginHorizontal: 50,
      },
      gpsText:{
         justifyContent: 'center',
@@ -65,5 +96,10 @@ export default StyleSheet.create({
         color: 'white',
         fontSize: 25,
         height: 70
+     },
+     buttonText:{
+         fontSize: 25,
+         fontWeight: 'bold',
+         color: 'white',
      }
 });

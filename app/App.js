@@ -7,8 +7,12 @@ import Icon from 'react-native-vector-icons/FontAwesome5' //this library has sta
 
 const socket = io('10.3.141.1:5000/') // Change to IP address of the device hosting the server.
 
+
+
 export default function App() {
-    const [gpsCoordinates, setGpsCoordinates] = useState("")
+    const [gpsCoordinates, setGpsCoordinates] = useState("");
+    const [connection, updateConnection] = useState("Disconnected");
+    const [translate, updateTranslate] = useState("Disconnected");
 
     /***   Socket Functions   ***/
     /* Event that triggers when the command that is sent to the Translate Module. */
@@ -23,14 +27,20 @@ export default function App() {
     /* Event that triggers when a successful connetion is established. */
     socket.on('connect', () => {
         console.log(`Connected with id: ${socket.id}`)
+        updateConnection("Connected")
+        updateTranslate("Connected")
     })
 
     socket.on('connect_error', (err) => {
         console.log(err.message);
+        
     })
 
     socket.on("disconnect", (reason) => {
         console.log(reason)
+        updateConnection("Disconnected")
+        updateTranslate("Disconnected")
+
         /* If it was the server that disconnected, manually reconnect. */
         if (reason === "io server disconnect") {
             socket.connect()
@@ -40,20 +50,27 @@ export default function App() {
 
     return (
         //this div holds everything inside it
-        <div> 
+        <div>  
             {/* This VIEW object is a container for all the buttons. The reason its in a container is to style */}
             <View style={styles.gpsLabel}>
                 <TouchableOpacity
                     onPress={getGPS}
                     style={styles.gpsLabel}>
-                    <Icon size={24} color="white" name="camera"/>
-                    <Text>GPS Coordinates</Text>
+                    <Icon size={24} color="white" name="map-pin"/>
+                    <Text style={styles.buttonText}>GPS Coordinates</Text> 
                     <Text style = {styles.gpsText}
                     autoCapitalize = 'characters'
-                    //    underlineColorAndroid = "transparent"
-                    //    placeholderTextColor = "#9a73ef"
+
                     > {gpsCoordinates} </Text>
                 </TouchableOpacity>
+            </View>
+            <View style={styles.container2}>
+                <View style={styles.connectionLabel}>
+                    <Text style={styles.buttonText}>WiFi Connection: {connection}</Text> 
+                </View>
+                <View style={styles.socketLabel}>
+                    <Text style={styles.buttonText}>LoRa Connection: {translate}</Text> 
+                </View>
             </View>
             <View style={styles.container}>
                 {/* This view is a container for button 1 and is repeated below...*/}
@@ -61,16 +78,16 @@ export default function App() {
                     <TouchableOpacity
                         onPress={screenshotFunction}
                         style={styles.roundButton2}>
-                        <Icon size={24} color="white" name="camera"/>
-                        <Text>Screenshot</Text>
+                        <Icon size={50} color="white" name="camera"/>
+                        <Text style={styles.buttonText}>Screenshot</Text> 
                     </TouchableOpacity>
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         onPress={moveUpFunction}
                         style={styles.roundButton2}>
-                        <Icon size={24} color="white" name="arrow-up"/>
-                        <Text>Move Camera Up.</Text>
+                        <Icon size={50} color="white" name="arrow-up"/>
+                        <Text style={styles.buttonText}>Move Camera Up</Text> 
                     </TouchableOpacity>
                 </View>
             </View>
@@ -79,16 +96,16 @@ export default function App() {
                     <TouchableOpacity
                         onPress={lightFunction}
                         style={styles.roundButton2}>
-                        <Icon size={24} color="white" name="lightbulb"/>
-                        <Text>Toggle Lights.</Text>
+                        <Icon size={50} color="white" name="lightbulb"/>
+                        <Text style={styles.buttonText}>Toggle Lights</Text> 
                     </TouchableOpacity>
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         onPress={moveDownFunction}
                         style={styles.roundButton2}>
-                        <Icon size={24} color="white" name="arrow-down"/>
-                        <Text>Move Camera Down.</Text>
+                        <Icon size={50} color="white" name="arrow-down"/>
+                        <Text style={styles.buttonText}>Move Camera Down</Text> 
                     </TouchableOpacity>
                 </View>
             </View>
@@ -98,8 +115,8 @@ export default function App() {
                     <TouchableOpacity
                         onPress={quitFunction}
                         style={styles.roundButton2}>
-                        <Icon size={24} color="white" name="times"/>
-                        <Text>Quit Program.</Text>
+                        <Icon size={50} color="white" name="times"/>
+                        <Text style={styles.buttonText}>Quit Program</Text> 
                     </TouchableOpacity>
                 </View>
             </View>
