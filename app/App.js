@@ -5,11 +5,7 @@ import { io } from 'socket.io-client';
 import styles from './style.js';
 import Icon from 'react-native-vector-icons/FontAwesome5' //this library has standard icons we used for the buttons
 
-<<<<<<< HEAD
-const socket = io('http://128.194.50.139:5000/') // Change to IP address of the device hosting the server.
-=======
-const socket = io('http://128.194.50.40:5000/') // Change to IP address of the device hosting the server.
->>>>>>> 93b6dd6c66e7845c4eaa2b0e7a09defa3bf65bb6
+const socket = io('http://10.3.141.1:5000/') // Change to IP address of the device hosting the server.
 
 export default function App() {
     const [gpsCoordinates, setGpsCoordinates] = useState("")
@@ -100,11 +96,7 @@ export default function App() {
                 {/* This view is a container for button 1 and is repeated below...*/}
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
-<<<<<<< HEAD
-                        // onPress={moveUpFunction}
-=======
                         onPress={quitFunction}
->>>>>>> 93b6dd6c66e7845c4eaa2b0e7a09defa3bf65bb6
                         style={styles.roundButton2}>
                         <Icon size={24} color="white" name="times"/>
                         <Text>Quit Program.</Text>
