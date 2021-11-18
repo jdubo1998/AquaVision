@@ -2,6 +2,7 @@ from serial import Serial, PARITY_NONE
 from serial.serialutil import SerialException
 import time
 from threading import Thread
+import os
 
 class LoRaRadio():
     def __init__(self, network, addr, target, port='/dev/serial0', baudrate=115200, timeout=0.5):
@@ -17,7 +18,7 @@ class LoRaRadio():
     # Writes to the serial port.
     def write_serial(self, command):
         self.ser.write(str.encode('{}\r\n'.format(command), encoding='utf-8'))
-        # self.read_serial()
+        self.read_serial()
         # self.wait_for_ok()
 
     # Quick method to send a message to another LoRa module.
@@ -34,6 +35,7 @@ class LoRaRadio():
     def read_serial(self):
         try:
             r = self.ser.readline()
+            # print(r)
             if r:
                 response = str(r, 'utf-8', errors='ignore')
                 self.callback(response)
@@ -71,7 +73,7 @@ class LoRaRadio():
             # self.reset()
             
         elif mode == 1:
-            # print('In receiving mode.')
+            print('In receiving mode.')
             if not self.receiving:
                 self.receiving = True
                 self.recv_thread = Thread(target=self._recv_thread)
@@ -103,8 +105,16 @@ def print_response(response):
 
 if __name__ == '__main__':
     # network = input('Network: ')
-    addr = input('Address: ')
-    send_addr = input('Other Device: ')
+    # addr = input('Address: ')
+    # send_addr = input('Other Device: ')
+    if os.uname()[1] == 'JD-RaspberryPi':
+        print('addr: 4')
+        addr = 4
+        send_addr = 5
+    else:
+        print('addr: 5')
+        addr = 5
+        send_addr = 4
 
     radio = LoRaRadio(3, addr, print_response)
 
