@@ -5,7 +5,7 @@ import { io } from 'socket.io-client';
 import styles from './style.js';
 import Icon from 'react-native-vector-icons/FontAwesome5' //this library has standard icons we used for the buttons
 
-const socket = io('http://128.194.50.40:5000/') // Change to IP address of the device hosting the server.
+const socket = io('10.3.141.1:5000/') // Change to IP address of the device hosting the server.
 
 export default function App() {
     const [gpsCoordinates, setGpsCoordinates] = useState("")
@@ -127,7 +127,7 @@ socket.on('relaycommand', (command) => {})
     }
 
     function getGPS() {
-        socket.emit('relaycommand', 'getGPS');
+        socket.emit('relaycommand', 'getgps');
     }
 
     function quitFunction() {

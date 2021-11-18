@@ -26,8 +26,6 @@ class LoRaRadio():
 
             if r is not None and '+OK' in r:
                 break
-            
-            print(r)
 
     # Quick method to send a message to another LoRa module.
     # FFFF is the broadcast address.
@@ -124,6 +122,9 @@ if __name__ == '__main__':
         print('addr: 5')
         addr = 5
         send_addr = 4
+
+    addr = 4
+    send_addr = 5
 
     radio = LoRaRadio(3, addr, print_response)
 
