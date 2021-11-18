@@ -27,6 +27,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "https://github.tamu.edu/jdubo1998/AquaVision"
   }
 }

@@ -28,18 +28,21 @@ class TranslateModule():
         elif command == 'getgps':
             print("getgps")
             self.server.relay_gps_data(self.lat, self.log)
-            # self.radio.send_message('gps', self.cm_addr)
+            self.radio.send_message('gps', self.cm_addr)
+            self.radio.set_mode(1)
         elif command == 'exit':
             print("exit")
             self.radio.send_message('exit', self.cm_addr)
             self.exit()
 
     def _interpret_lora_message(self, message):
-        pass
-        # self.lat = unpack('!f', bytes.fromhex(message[:8]))[0]
-        # self.log = unpack('!f', bytes.fromhex(message[8:]))[0]
+        try:
+            self.lat = unpack('!f', bytes.fromhex(message[:8]))[0]
+            self.log = unpack('!f', bytes.fromhex(message[8:]))[0]
+        except:
+            pass
 
-        # self.radio.set_mode(0)
+        self.radio.set_mode(0)
 
     def start(self):
         self.server.start()
