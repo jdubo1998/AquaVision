@@ -16,10 +16,16 @@ class LoRaRadio():
         self.open()
 
     # Writes to the serial port.
-    def write_serial(self, command):
-        self.ser.write(str.encode('{}\r\n'.format(command), encoding='utf-8'))
-        self.read_serial()
-        # self.wait_for_ok()
+    def write_serial(self, command, wait_for_ok=False):
+        while True:
+            self.ser.write(str.encode('{}\r\n'.format(command), encoding='utf-8'))
+            r = self.read_serial()
+
+            if not wait_for_ok:
+                break
+
+            if r is not None and '+OK' in r:
+                break
 
     # Quick method to send a message to another LoRa module.
     # FFFF is the broadcast address.
@@ -58,7 +64,7 @@ class LoRaRadio():
 
     def reset(self):
         self.write_serial('AT+NETWORKID={}'.format(self.network))
-        self.write_serial('AT+ADDRESS={}'.format(self.addr))
+        self.write_serial('AT+ADDRESS={}'.format(self.addr), wait_for_ok=True)
         self.write_serial('AT+MODE=0')
 
         self.ser.readline()
@@ -101,6 +107,7 @@ class LoRaRadio():
 
 def print_response(response):
     if not response == str(b'A\x00\x01\x01', 'utf-8'):
+        # pass
         print(response)
 
 if __name__ == '__main__':
@@ -115,6 +122,9 @@ if __name__ == '__main__':
         print('addr: 5')
         addr = 5
         send_addr = 4
+
+    addr = 4
+    send_addr = 5
 
     radio = LoRaRadio(3, addr, print_response)
 

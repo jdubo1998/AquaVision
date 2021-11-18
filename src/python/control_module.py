@@ -7,9 +7,9 @@ from time import sleep
 
 class ControlModule():
     def __init__(self):
-        self.radio = LoRaRadio(3, 4, self.interpret_lora_message)
+        self.radio = LoRaRadio(3, 5, self.interpret_lora_message)
         self.radio.set_mode(1)
-        self.gps = GPSReader()
+        # self.gps = GPSReader()
         # self.gps.start()
         self.camera = CameraController()
 
@@ -25,7 +25,7 @@ class ControlModule():
             self.camera.take_screenshot()
         elif message.__contains__('gps'):
             self.radio.set_mode(0)
-            lat, log = self.gps.get_coor()
+            # lat, log = self.gps.get_coor()
 
             print('{}   {}'.format(lat, log))
 
@@ -50,7 +50,7 @@ class ControlModule():
 
     def stop(self):
         self.radio.close()
-        self.gps.stop()
+        # self.gps.stop()
 
         sys.exit(0)
 
