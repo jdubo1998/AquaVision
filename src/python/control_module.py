@@ -7,10 +7,10 @@ from time import sleep
 
 class ControlModule():
     def __init__(self):
-        self.radio = LoRaRadio('0200', self.interpret_lora_message)
+        self.radio = LoRaRadio(3, 4, self.interpret_lora_message)
         self.radio.set_mode(1)
         self.gps = GPSReader()
-        self.gps.start()
+        # self.gps.start()
         self.camera = CameraController()
 
     # Interprets a received message and runs the appropriate function based on the contents.
@@ -27,18 +27,19 @@ class ControlModule():
             self.radio.set_mode(0)
             lat, log = self.gps.get_coor()
 
-            self.radio.send_bytes(
-                '{}{}'.format(hex(unpack('<I', pack('<f', lat))[0])[2:],hex(unpack('<I', pack('<f', log))[0])[2:])
-            )
+            print('{}   {}'.format(lat, log))
 
-            self.radio.set_mode(1)
+            # self.radio.send_bytes(
+            #     '{}{}'.format(hex(unpack('<I', pack('<f', lat))[0])[2:],hex(unpack('<I', pack('<f', log))[0])[2:])
+            # )
+
+            # self.radio.set_mode(1)
     
         elif message.__contains__('exit'):
             self.running = False
 
     def _loop(self):
         while self.running:
-            
             sleep(5)
 
         self.stop()
