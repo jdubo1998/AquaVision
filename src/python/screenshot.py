@@ -1,29 +1,46 @@
 import cv2
+from datetime import datetime
+import os
 
-name = 'capture'
-
+dir = '../../screenshots'
 cam = cv2.VideoCapture(0)
 
-cv2.namedWindow("Press space to capture live stream image", cv2.WINDOW_NORMAL)
-cv2.resizeWindow("Press space to capture live stream image", 500, 300)
-
-img_counter = 0
-
-while True:
+def take_screenshot():
+    adir = os.path.abspath(dir)
     ret, frame = cam.read()
-    if not ret:
-        print("Failed to grab frame")
-        break
-    cv2.imshow("Press space to capture live stream image", frame)
+    cv2.imwrite('{}/{}.jpg'.format(adir, datetime.today().strftime('%m-%d-%Y_%H-%M-%S')), frame)
 
-    k = cv2.waitKey(1)
-    if k % 256 == 32:
-        # SPACE pressed
-        img_name = "dataset/" + name + "/image_{}.jpg".format(img_counter)
-        cv2.imwrite(img_name, frame)
-        print("{} written!".format(img_name))
-        img_counter += 1
+def release():
+    cam.release()
 
-cam.release()
 
-cv2.destroyAllWindows()
+if __name__ == '__main__':
+    while True:
+        i = input('> ')
+
+        if i == 's':
+            take_screenshot()
+
+        if i == 'q':
+            break
+
+        if i == 'r':
+            cv2.namedWindow('capture', cv2.WINDOW_NORMAL)
+            cv2.resizeWindow('capture', 500, 300)
+
+            while True:
+                success, frame = cam.read()
+                if success:
+                    cv2.imshow('capture', frame)
+
+                else:
+                    print("Can't read image.")
+
+                k = cv2.waitKey(1)
+
+                if k == 'q':
+                    cv2.destroyAllWindows()
+                    break
+            break
+
+    release()

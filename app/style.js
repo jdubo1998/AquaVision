@@ -30,7 +30,7 @@ export default StyleSheet.create({
         padding: 10,
     },
     searchButton: {
-        background: 'orange',
+        backgroundColor: 'orange',
         padding: '10px 20px',
         color: 'white',
     },
