@@ -2,38 +2,44 @@ import sys
 import screenshot
 from lora_radio import LoRaRadio
 from server import Server
+from struct import pack, unpack
 
 class TranslateModule():
     def __init__(self):
-        self.radio = LoRaRadio('0200', self._interpret_lora_message)
+        self.radio = LoRaRadio(3, 4, self._interpret_lora_message)
         self.server = Server(self._interpret_command)
+        self.cm_addr = 5
+        self.lat = 0.0
+        self.log = 0.0
 
     def _interpret_command(self, command):
         if command == 'moveup':
             print("moveup")
-            self.radio.send_message('md') # Swiched due to wiring.
+            self.radio.send_message('mu', self.cm_addr)
         elif command == 'movedown':
             print("movedown")
-            self.radio.send_message('mu') # Swiched due to wiring.
+            self.radio.send_message('md', self.cm_addr)
         elif command == 'lights':
             print("lights")
-            self.radio.send_message('tl')
+            self.radio.send_message('tl', self.cm_addr)
         elif command == 'screenshot':
             print("screenshot")
             screenshot.take_screenshot()
         elif command == 'getgps':
             print("getgps")
-            self.radio.send_message('gps')
+            self.server.relay_gps_data(self.lat, self.log)
+            # self.radio.send_message('gps', self.cm_addr)
         elif command == 'exit':
             print("exit")
-            self.radio.send_message('exit')
+            self.radio.send_message('exit', self.cm_addr)
             self.exit()
 
     def _interpret_lora_message(self, message):
-        print(message)
-        self.radio.set_mode(0)
-        # if message.__contains__():
-        #     pass
+        pass
+        # self.lat = unpack('!f', bytes.fromhex(message[:8]))[0]
+        # self.log = unpack('!f', bytes.fromhex(message[8:]))[0]
+
+        # self.radio.set_mode(0)
 
     def start(self):
         self.server.start()
