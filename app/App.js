@@ -7,8 +7,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5' //this library has sta
 
 const socket = io('10.3.141.1:5000/') // Change to IP address of the device hosting the server.
 
-
-
 export default function App() {
     const [gpsCoordinates, setGpsCoordinates] = useState("");
     const [connection, updateConnection] = useState("Disconnected");
@@ -122,15 +120,9 @@ export default function App() {
             </View>
         </div>
     )
-
-
-
-
-
-/***   Socket Functions   ***/
-/* Event that triggers when the command that is sent to the Translate Module. */
-socket.on('relaycommand', (command) => {})
-
+    
+    /***   Socket Functions   ***/
+    /* Event that triggers when the command that is sent to the Translate Module. */
     function lightFunction() {
         socket.emit('relaycommand', 'lights');
     }
