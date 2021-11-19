@@ -29,23 +29,20 @@ class TranslateModule():
         elif command == 'getgps':
             print("getgps")
             self.server.relay_gps_data(self.lat, self.log)
-            self.radio.send_message('gps', self.cm_addr)
-            self.radio.set_mode(1)
         elif command == 'exit':
             print("exit")
             self.radio.send_message('exit', self.cm_addr)
             self.exit()
 
     def _interpret_lora_message(self, message):
-        try:
-            self.lat = unpack('!f', bytes.fromhex(message[:8]))[0]
-            self.log = unpack('!f', bytes.fromhex(message[8:]))[0]
+        print(message)
+        # if 'gps' in message:
+        #     params = message.split(' ')
 
-            self.server.relay_gps_data(self.lat, self.log)
-        except:
-            pass
+        #     self.lat = params[1]
+        #     self.lat = params[2]
 
-        self.radio.set_mode(0)
+        #     self.radio.set_mode(0)
 
     def start(self):
         self.server.start()
@@ -53,31 +50,8 @@ class TranslateModule():
     def exit(self):
         self.radio.close()
         self.server.stop()
-        screenshot.exit()
         sys.exit(0)
 
 if __name__ == '__main__':
     translator = TranslateModule()
     translator.start()
-
-    # try:
-    #     while True:
-    #         i = input('> ')
-
-    #         if i == 'mu':
-    #             translator._interpret_command('moveup')
-    #         elif i == 'md':
-    #             translator._interpret_command('movedown')
-    #         elif i == 'tl':
-    #             translator._interpret_command('lights')
-    #         elif i == 'ss':
-    #             translator._interpret_command('screenshot')
-    #         elif i == 'gps':
-    #             translator._interpret_command('getgps')
-    #         elif i == 'q':
-    #             translator._interpret_command('exit')
-
-    # except KeyboardInterrupt:
-    #     pass
-
-    translator.exit()

@@ -3,14 +3,12 @@ from datetime import datetime
 import os
 
 dir = '../../screenshots'
-cam = cv2.VideoCapture(-1)
 
 def take_screenshot():
+    cam = cv2.VideoCapture(-1)
     adir = os.path.abspath(dir)
     ret, frame = cam.read()
     cv2.imwrite('{}/{}.jpg'.format(adir, datetime.today().strftime('%m-%d-%Y_%H-%M-%S')), frame)
-
-def release():
     cam.release()
 
 def record_vid(duration):
@@ -30,12 +28,14 @@ def record_vid(duration):
 
     recording = cv2.VideoWriter('{}/{}.avi'.format(adir, datetime.today().strftime('%m-%d-%Y_%H-%M-%S')), cv2.VideoWriter_fourcc(*'MJPG'), 30, size)
 
-    for i in range(duration):
+    for _ in range(duration):
         ret, frame = cam.read()
 
         if not ret:
             print('Error trying to read frame.')
             break
+
+    cam.release()
 
 if __name__ == '__main__':
     while True:
@@ -48,6 +48,7 @@ if __name__ == '__main__':
             break
 
         if i == 'r':
+            cam = cv2.VideoCapture(-1)
             cv2.namedWindow('capture', cv2.WINDOW_NORMAL)
             cv2.resizeWindow('capture', 500, 300)
 
@@ -66,6 +67,6 @@ if __name__ == '__main__':
                 if k == 'q':
                     cv2.destroyAllWindows()
                     break
-            break
 
-    release()
+            cam.release()
+            break
