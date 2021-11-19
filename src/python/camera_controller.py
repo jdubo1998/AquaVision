@@ -1,6 +1,4 @@
 import RPi.GPIO as GPIO
-# import cv2
-import os
 from datetime import datetime
 import time
 
@@ -23,38 +21,43 @@ class CameraController():
         GPIO.output(self.down_pin, True)
         GPIO.output(self.up_pin, True)
         GPIO.output(self.ledlight_pin, True)
-        # print("Waiting for command")
-        # time.sleep(1)
 
     def motor_up(self):
         if self.down_count > 0:
+            print('Raising camera.')
             self.down_count = self.down_count - 1
-            print('Move motor up.')
             GPIO.output(self.down_pin, False)
             GPIO.output(self.up_pin, True)
             time.sleep(2.5)
             self.motor_off()
         else:
-            print("Can't go up anymore.")
+            print('Motor is reeled up.')
 
     def motor_down(self):
         if self.down_count < self.down_count_max:
+            print('Lowering camera.')
             self.down_count = self.down_count + 1
-            print('Move motor down.')
             GPIO.output(self.down_pin, True)
             GPIO.output(self.up_pin, False)
             time.sleep(2.5)
             self.motor_off()
+        else:
+            print('Maximum depth reached.')
 
     def motor_off(self):
         GPIO.output(self.down_pin, True)
         GPIO.output(self.up_pin, True)
-        # print("motor turned off")
-        # time.sleep(2.5)
 
     def toggle_lights(self):
-        print('Toggled lights. (pin {})'.format(self.ledlight_pin))
+        print('Toggling lights.')
         GPIO.output(self.ledlight_pin, True)
         time.sleep(1)
         GPIO.output(self.ledlight_pin, False)
         time.sleep(1)
+
+    def toggle_night_vision(self):
+        print('Toggling night vision.')
+
+    def reset(self):
+        for i in range(self.down_count):
+            self.motor_up()
