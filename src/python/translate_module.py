@@ -35,14 +35,13 @@ class TranslateModule():
             self.exit()
 
     def _interpret_lora_message(self, message):
-        print(message)
-        # if 'gps' in message:
-        #     params = message.split(' ')
+        if 'gps' in message:
+            params = message.split(' ')
 
-        #     self.lat = params[1]
-        #     self.lat = params[2]
+            self.lat = params[1]
+            self.lat = params[2]
 
-        #     self.radio.set_mode(0)
+            self.radio.set_mode(0)
 
     def start(self):
         self.server.start()
