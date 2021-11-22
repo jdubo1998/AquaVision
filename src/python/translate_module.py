@@ -2,7 +2,6 @@ import sys
 import screenshot
 from lora_radio import LoRaRadio
 from server import Server
-from struct import pack, unpack
 
 class TranslateModule():
     def __init__(self):
@@ -29,6 +28,9 @@ class TranslateModule():
         elif command == 'getgps':
             print("getgps")
             self.server.relay_gps_data(self.lat, self.log)
+        elif command == 'handshake':
+            self.radio.send_message('hs')
+            self.radio.set_mode(1)
         elif command == 'exit':
             print("exit")
             self.radio.send_message('exit', self.cm_addr)
@@ -43,6 +45,9 @@ class TranslateModule():
         #     self.lat = params[2]
 
         #     self.radio.set_mode(0)
+        if 'hs' in message:
+            self.server.emit('handshake', 'success')
+            self.radio.set_mode(0)
 
     def start(self):
         self.server.start()
