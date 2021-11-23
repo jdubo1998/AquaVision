@@ -35,6 +35,7 @@ class TranslateModule():
             while not self.get_gps:
                 sleep(3)
 
+            print('Received GPS: Lat: {}   Log: {}'.format(self.lat, self.log))
             self.server.relay_gps_data(self.lat, self.log)
         elif command == 'exit':
             print("exit")

@@ -113,16 +113,17 @@ def print_response(response):
         print(response)
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1:
+    if len(sys.argv) == 2:
         addr = int(sys.argv[1])
         send_addr = 4
-    elif lensyss.argv) == 2:
+    elif len(sys.argv) == 3:
         addr = int(sys.argv[1])
         send_addr = int(sys.argv[2])
     else:
         addr = 5
         send_addr = 4
 
+    print('Starting radio at addr: {}, sending to addr: {}'.format(addr, send_addr))
     radio = LoRaRadio(3, addr, print_response)
 
     try:
