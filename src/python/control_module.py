@@ -32,6 +32,7 @@ class ControlModule():
 
             # self.radio.set_mode(1)
         elif 'hs' in message:
+            print('Received handshake from Translate Module.')
             self.radio.set_mode(0)
             self.radio.send_message('hs')
             self.radio.set_mode(1)

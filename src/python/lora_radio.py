@@ -12,7 +12,7 @@ class LoRaRadio():
         self.addr = addr
         self.callback = target
         self.recv_thread = Thread(target=self._recv_thread)
-        self.reset()
+        self.init()
         self.open()
 
     # Writes to the serial port.
@@ -32,7 +32,7 @@ class LoRaRadio():
     def send_message(self, message, addr=11):
         # Converts message to an 8 byte hex array.
         # message_hex = ''.join('{:02x}'.format(ord(c)) for c in message.ljust(8))
-        self.write_serial('AT+SEND={},{},{}'.format(str(addr), str(len(message)), str(message)))
+        self.write_serial('AT+SEND={},{},{}'.format(str(addr), str(len(message)), str(message)), wait_for_ok=True)
 
     # def send_message(self, bytes, addr=11):
     #     self.write_serial('AT+SEND={},"{}"'.format(addr, bytes))
@@ -62,10 +62,10 @@ class LoRaRadio():
             if response == '+ERR=4\r\n':
                 time.sleep(1)
 
-    def reset(self):
-        self.write_serial('AT+NETWORKID={}'.format(self.network))
+    def init(self):
+        self.write_serial('AT+NETWORKID={}'.format(self.network), wait_for_ok=True)
         self.write_serial('AT+ADDRESS={}'.format(self.addr), wait_for_ok=True)
-        self.write_serial('AT+MODE=0')
+        self.write_serial('AT+MODE=0', wait_for_ok=True)
 
         self.ser.readline()
 
@@ -75,8 +75,6 @@ class LoRaRadio():
             self.receiving = False
             if self.recv_thread.is_alive():
                 self.recv_thread.join()
-
-            # self.reset()
             
         elif mode == 1:
             print('In receiving mode.')
@@ -95,9 +93,9 @@ class LoRaRadio():
     # Closes the serial port and any thread that is polling for received data.
     def close(self):
         self.receiving = False
-        self.ser.close()
         if self.recv_thread.is_alive():
             self.recv_thread.join()
+        self.ser.close()
 
     # Polls the serial port to read any messages received by the LoRa radio.
     def _recv_thread(self):
