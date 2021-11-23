@@ -111,20 +111,15 @@ def print_response(response):
         print(response)
 
 if __name__ == '__main__':
-    # network = input('Network: ')
-    # addr = input('Address: ')
-    # send_addr = input('Other Device: ')
-    if os.uname()[1] == 'JD-RaspberryPi':
-        print('addr: 4')
-        addr = 4
-        send_addr = 5
-    else:
-        print('addr: 5')
-        addr = 5
+    if len(os.argv) == 1:
+        addr = int(os.argv[1])
         send_addr = 4
-
-    addr = 4
-    send_addr = 5
+    elif len(os.argv) == 2:
+        addr = int(os.argv[1])
+        send_addr = int(os.argv[2])
+    else:
+        aaddr = 5
+        send_addr = 4
 
     radio = LoRaRadio(3, addr, print_response)
 
