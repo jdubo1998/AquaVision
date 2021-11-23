@@ -40,11 +40,6 @@ class GPSReader:
             self.reader_thread = Thread(target=self._start_reader_thread)
             self.reader_thread.start() 
 
-    # def start(self):
-    #     if not self.reading:
-    #         self.reading = True
-    #         self.reader_thread.start() 
-
     def stop(self):
         if self.reading:
             self.reading = False
