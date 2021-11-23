@@ -144,7 +144,7 @@ if __name__ == '__main__':
                 elif i.__contains__('+'):
                     radio.write_serial('AT+{}'.format(i[1:]))
                 
-                radio.send_message(i[:8], send_addr)
+                radio.send_message(i, send_addr)
     except KeyboardInterrupt:
         pass
 
