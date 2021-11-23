@@ -10,6 +10,10 @@ class TranslateModule():
         self.cm_addr = 5
         self.lat = 0.0
         self.log = 0.0
+        self.handshake = False
+
+        self.radio.send_message('hs')
+        self.radio.set_mode(1)
 
     def _interpret_command(self, command):
         if command == 'moveup':
@@ -45,8 +49,9 @@ class TranslateModule():
         #     self.lat = params[2]
 
         #     self.radio.set_mode(0)
-        if 'hs' in message:
-            self.server.emit('handshake', 'success')
+        elif 'hs' in message:
+            Print('Received handshake from Control Module.')
+            self.handshake = True
             self.radio.set_mode(0)
 
     def start(self):
