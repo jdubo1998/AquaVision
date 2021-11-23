@@ -31,11 +31,14 @@ def record_vid(duration):
     for _ in range(duration):
         ret, frame = cam.read()
 
+        if ret:
+            recording.write(frame)
+
         if not ret:
             print('Error trying to read frame.')
-            break
-
+    
     cam.release()
+    recording.release()
 
 if __name__ == '__main__':
     while True:
