@@ -1,8 +1,10 @@
+
 from serial import Serial, PARITY_NONE
 from serial.serialutil import SerialException
 import time
 from threading import Thread
 import os
+import sys
 
 class LoRaRadio():
     def __init__(self, network, addr, target, port='/dev/serial0', baudrate=115200, timeout=0.5):
@@ -111,14 +113,14 @@ def print_response(response):
         print(response)
 
 if __name__ == '__main__':
-    if len(os.argv) == 1:
-        addr = int(os.argv[1])
+    if len(sys.argv) == 1:
+        addr = int(sys.argv[1])
         send_addr = 4
-    elif len(os.argv) == 2:
-        addr = int(os.argv[1])
-        send_addr = int(os.argv[2])
+    elif lensyss.argv) == 2:
+        addr = int(sys.argv[1])
+        send_addr = int(sys.argv[2])
     else:
-        aaddr = 5
+        addr = 5
         send_addr = 4
 
     radio = LoRaRadio(3, addr, print_response)
