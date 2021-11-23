@@ -25,7 +25,7 @@ class TranslateModule():
         elif command == 'screenshot':
             print("screenshot")
             screenshot.take_screenshot()
-            screenshot.release()
+            # screenshot.release()
         elif command == 'getgps':
             print("getgps")
             self.server.relay_gps_data(self.lat, self.log)

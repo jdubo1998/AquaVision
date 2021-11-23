@@ -1,13 +1,16 @@
 import cv2
 from datetime import datetime
 import os
+import time
 
 dir = '../../screenshots'
 
 def take_screenshot():
     cam = cv2.VideoCapture(-1)
+    for _ in range(60):
+        ret, frame = cam.read()
+
     adir = os.path.abspath(dir)
-    ret, frame = cam.read()
     cv2.imwrite('{}/{}.jpg'.format(adir, datetime.today().strftime('%m-%d-%Y_%H-%M-%S')), frame)
     cam.release()
 
@@ -46,6 +49,9 @@ if __name__ == '__main__':
 
         if i == 's':
             take_screenshot()
+
+        if i == 'v':
+            record_vid(90)
 
         if i == 'q':
             break
