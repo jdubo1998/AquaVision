@@ -33,7 +33,12 @@ export default function App() {
     /* Event that triggers when a successful connetion is established. */
     socket.on('connect', () => {
         console.log(`Connected with id: ${socket.id}`)
-        updateTranslate("Connected")
+        updateConnection("Connected")
+        socket.emit('relaycommand', 'handshake')
+    })
+
+    socket.on('handshake', (status) => {
+        updateTranslate(status)
     })
 
     socket.on('connect_error', (err) => {
