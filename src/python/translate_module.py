@@ -2,7 +2,6 @@ import sys
 import screenshot
 from lora_radio import LoRaRadio
 from server import Server
-from struct import pack, unpack
 
 class TranslateModule():
     def __init__(self):
@@ -11,6 +10,7 @@ class TranslateModule():
         self.cm_addr = 5
         self.lat = 0.0
         self.log = 0.0
+        self.handshake = False
 
     def _interpret_command(self, command):
         if command == 'moveup':
@@ -35,7 +35,6 @@ class TranslateModule():
             self.exit()
 
     def _interpret_lora_message(self, message):
-        print(message)
         # if 'gps' in message:
         #     params = message.split(' ')
 
@@ -43,6 +42,11 @@ class TranslateModule():
         #     self.lat = params[2]
 
         #     self.radio.set_mode(0)
+        if 'hs' in message:
+            print('Handshake from Control Module received.')
+            if self.server:
+                self.server.emit('handshake', 'Connected')
+                self.handshake = True
 
     def start(self):
         self.server.start()
@@ -54,4 +58,8 @@ class TranslateModule():
 
 if __name__ == '__main__':
     translator = TranslateModule()
-    translator.start()
+
+    try:
+        translator.start()
+    except KeyboardInterrupt:
+        translator.exit()

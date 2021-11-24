@@ -21,8 +21,12 @@ class Server(Namespace):
     def relay_gps_data(self, lat, lon):
         self.sio.emit('relaydata', 'Latitude: {}   Longitude: {}'.format(lat, lon))
 
-    def on_connect(sid):
-        print('Connected. ({})'.format(sid))
+    def emit(self, event, data):
+        self.sio.emit(event, data)
+
+    def on_connect(self, sid):
+        print('Connected with id: {}.'.format(sid))
+        self.callback('handshake')
 
     def on_relaycommand(self, command):
         self.callback(command)
@@ -31,7 +35,7 @@ class Server(Namespace):
         print('on_relaydata')
     
     def start(self):
-        self.sio.run(self.app, host='0.0.0.0', debug=True)
+        self.sio.run(self.app, host='0.0.0.0', debug=False)
         
     def stop(self):
         self.sio.stop()

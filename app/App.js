@@ -22,11 +22,23 @@ export default function App() {
         setGpsCoordinates(data)
     })
 
+    /* Event that triggers when the data received from the Translate Module. */
+    socket.on('handshake', (data) => {
+        console.log(data)
+        if (data == 'success') {
+            updateConnection("Connected")
+        }
+    })
+
     /* Event that triggers when a successful connetion is established. */
     socket.on('connect', () => {
         console.log(`Connected with id: ${socket.id}`)
         updateConnection("Connected")
-        updateTranslate("Connected")
+        socket.emit('relaycommand', 'handshake')
+    })
+
+    socket.on('handshake', (status) => {
+        updateTranslate(status)
     })
 
     socket.on('connect_error', (err) => {
