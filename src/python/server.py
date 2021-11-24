@@ -20,9 +20,8 @@ class Server(Namespace):
     def emit(self, event, data):
         self.sio.emit(event, data)
 
-    def on_connect(self, sid):
-        print('Connected with id: {}.'.format(sid))
-        self.callback('handshake')
+    def on_connect(sid):
+        print('Connected. ({})'.format(sid))
 
     def on_relaycommand(self, command):
         self.callback(command)
