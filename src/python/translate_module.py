@@ -11,8 +11,6 @@ class TranslateModule():
         self.server = Server(self._interpret_command)
         self.cm_addr = 5
         self.get_gps = False
-        self.lat = 0.0
-        self.log = 0.0
 
     def _interpret_command(self, command):
         if command == 'moveup':
@@ -28,15 +26,6 @@ class TranslateModule():
             print("screenshot")
             screenshot.take_screenshot()
             # screenshot.release()
-        elif command == 'getgps':
-            print("getgps")
-            self.get_gps = False
-            self.radio.send_message('gps', self.cm_addr)
-            while not self.get_gps:
-                sleep(3)
-
-            print('Received GPS: Lat: {}   Log: {}'.format(self.lat, self.log))
-            self.server.relay_gps_data(self.lat, self.log)
         elif command == 'exit':
             print("exit")
             self.radio.send_message('exit', self.cm_addr)
@@ -46,11 +35,9 @@ class TranslateModule():
         if 'gps' in message:
             params = message.split(' ')
 
-            self.lat = params[1]
-            self.lat = params[2]
-            
-            self.radio.set_mode(0)
-            self.get_gps = True
+            lat = params[1]
+            lon = params[2].split(',')[0]
+            self.server.emit('relaydata', 'Latitude: {}   Longitude: {}'.format(lat, lon))
 
     def start(self):
         self.server.start()
