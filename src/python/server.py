@@ -35,7 +35,7 @@ class Server(Namespace):
         print('on_relaydata')
     
     def start(self):
-        self.sio.run(self.app, host='0.0.0.0', debug=True)
+        self.sio.run(self.app, host='0.0.0.0', debug=False)
         
     def stop(self):
         self.sio.stop()

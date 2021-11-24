@@ -12,9 +12,6 @@ class TranslateModule():
         self.log = 0.0
         self.handshake = False
 
-        self.radio.send_message('hs')
-        self.radio.set_mode(1)
-
     def _interpret_command(self, command):
         if command == 'moveup':
             print("moveup")
@@ -32,16 +29,12 @@ class TranslateModule():
         elif command == 'getgps':
             print("getgps")
             self.server.relay_gps_data(self.lat, self.log)
-        elif command == 'handshake':
-            self.radio.send_message('hs')
-            self.radio.set_mode(1)
         elif command == 'exit':
             print("exit")
             self.radio.send_message('exit', self.cm_addr)
             self.exit()
 
     def _interpret_lora_message(self, message):
-        print(message)
         # if 'gps' in message:
         #     params = message.split(' ')
 
@@ -49,10 +42,11 @@ class TranslateModule():
         #     self.lat = params[2]
 
         #     self.radio.set_mode(0)
-        elif 'hs' in message:
-            Print('Received handshake from Control Module.')
-            self.handshake = True
-            self.radio.set_mode(0)
+        if 'hs' in message:
+            print('Handshake from Control Module received.')
+            if self.server:
+                self.server.emit('handshake', 'Connected')
+                self.handshake = True
 
     def start(self):
         self.server.start()
@@ -64,4 +58,8 @@ class TranslateModule():
 
 if __name__ == '__main__':
     translator = TranslateModule()
-    translator.start()
+
+    try:
+        translator.start()
+    except KeyboardInterrupt:
+        translator.exit()
