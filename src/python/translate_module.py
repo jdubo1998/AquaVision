@@ -8,9 +8,6 @@ class TranslateModule():
         self.radio = LoRaRadio(3, 4, self._interpret_lora_message)
         self.server = Server(self._interpret_command)
         self.cm_addr = 5
-        self.lat = 0.0
-        self.log = 0.0
-        self.handshake = False
 
     def _interpret_command(self, command):
         if command == 'moveup':
@@ -26,27 +23,22 @@ class TranslateModule():
             print("screenshot")
             screenshot.take_screenshot()
             # screenshot.release()
-        elif command == 'getgps':
-            print("getgps")
-            self.server.relay_gps_data(self.lat, self.log)
         elif command == 'exit':
             print("exit")
             self.radio.send_message('exit', self.cm_addr)
             self.exit()
 
     def _interpret_lora_message(self, message):
-        # if 'gps' in message:
-        #     params = message.split(' ')
-
-        #     self.lat = params[1]
-        #     self.lat = params[2]
-
-        #     self.radio.set_mode(0)
         if 'hs' in message:
             print('Handshake from Control Module received.')
             if self.server:
                 self.server.emit('handshake', 'Connected')
-                self.handshake = True
+        if 'gps' in message:
+            params = message.split(' ')
+
+            lat = params[1]
+            lon = params[2].split(',')[0]
+            self.server.emit('relaydata', 'Latitude: {}   Longitude: {}'.format(lat, lon))
 
     def start(self):
         self.server.start()
