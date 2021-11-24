@@ -8,7 +8,6 @@ from time import sleep
 class ControlModule():
     def __init__(self):
         self.radio = LoRaRadio(3, 5, self.interpret_lora_message)
-        self.radio.set_mode(1)
         # self.gps = GPSReader()
         self.camera = CameraController()
         self.tm_addr = 4
@@ -31,17 +30,13 @@ class ControlModule():
             # self.radio.send_message('gps {:.6f} {:.6f}'.format(lat, log), self.tm_addr)
 
             # self.radio.set_mode(1)
-        elif 'hs' in message:
-            print('Received handshake from Translate Module.')
-            self.radio.set_mode(0)
-            self.radio.send_message('hs')
-            self.radio.set_mode(1)
         elif 'exit' in message:
             self.running = False
 
     def _loop(self):
         while self.running:
             # self.gps.read_async()
+            self.radio.send_message('hs', self.tm_addr)
             sleep(5)
 
         self.stop()
