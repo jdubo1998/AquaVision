@@ -11,6 +11,7 @@ export default function App() {
     const [gpsCoordinates, setGpsCoordinates] = useState("");
     const [connection, updateConnection] = useState("Disconnected");
     const [translate, updateTranslate] = useState("Disconnected");
+    const [recordStatus, setRecordStatus] = useState({"state": "Record", "icon": "video"});
 
     /***   Socket Functions   ***/
     /* Event that triggers when the command that is sent to the Translate Module. */
@@ -123,6 +124,14 @@ export default function App() {
                 {/* This view is a container for button 1 and is repeated below...*/}
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
+                        onPress={recordVideo}
+                        style={styles.roundButton2}>
+                        <Icon size={50} color="white" name={recordStatus["icon"]}/>
+                        <Text style={styles.buttonText}>{recordStatus["state"]}</Text> 
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
                         onPress={quitFunction}
                         style={styles.roundButton2}>
                         <Icon size={50} color="white" name="times"/>
@@ -157,5 +166,15 @@ export default function App() {
 
     function screenshotFunction() {
         socket.emit('relaycommand', 'screenshot');
+    }
+
+    function recordVideo() {
+        if (recordStatus["state"] == "Record") {
+            setRecordStatus({"state": "Stop", "icon": "video-slash"});
+            socket.emit('relaycommand', 'startrecord');
+        } else if (recordStatus["state"] == "Stop") {
+            setRecordStatus({"state": "Record", "icon": "video"});
+            socket.emit('relaycommand', 'stoprecord');
+        }
     }
 }
