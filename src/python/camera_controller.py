@@ -59,5 +59,5 @@ class CameraController():
         print('Toggling night vision.')
 
     def reset(self):
-        for i in range(self.down_count):
+        for _ in range(self.down_count):
             self.motor_up()

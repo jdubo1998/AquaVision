@@ -42,6 +42,7 @@ class ControlModule():
         self._loop()
 
     def stop(self):
+        self.camera.reset()
         self.radio.close()
         self.gps.stop()
         sys.exit(0)
